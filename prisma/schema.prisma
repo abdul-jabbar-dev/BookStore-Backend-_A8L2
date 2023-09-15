@@ -9,3 +9,69 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum ROLE {
+  Customer
+  Admin
+}
+
+model User {
+  id              String            @id() @default(uuid())
+  name            String
+  email           String            @unique()
+  password        String
+  role            ROLE              @default(Customer)
+  contactNo       String
+  address         String
+  profileImg      String?
+  reviewAndRating ReviewAndRating[]
+  order           Order?
+}
+
+model Category {
+  id    String @id() @default(uuid())
+  title String @unique
+  books Book[]
+}
+
+model Book {
+  id              String            @id() @default(uuid())
+  title           String            @unique
+  author          String
+  price           Float
+  genre           String
+  publicationDate String
+  categoryId      String
+  caregory        Category          @relation(fields: [categoryId], references: [id])
+  reviewAndRating ReviewAndRating[]
+  orderedBook     OrderedBook[]
+}
+
+model ReviewAndRating {
+  id     String @id() @default(uuid())
+  review String
+  rating Int
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id])
+}
+
+model OrderedBook {
+  id String @id() @default(uuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  bookId String
+  Book   Book   @relation(fields: [bookId], references: [id])
+
+  quantity Int
+}
+
+model Order {
+  id          String        @id() @default(uuid())
+  orderedBook OrderedBook[]
+  userId      String        @unique
+  user        User          @relation(fields: [userId], references: [id])
+}
