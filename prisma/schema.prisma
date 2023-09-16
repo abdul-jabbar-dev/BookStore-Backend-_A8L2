@@ -16,10 +16,12 @@ enum ROLE {
 }
 
 model Credential {
-  userId   String @id() @unique()
-  user     User   @relation(fields: [userId], references: [id])
-  password String
-  email    String
+  userId       String  @id() @unique()
+  user         User    @relation(fields: [userId], references: [id])
+  password     String
+  email        String  @unique()
+  refreshToken String?
+  accessToken  String?
 }
 
 model User {

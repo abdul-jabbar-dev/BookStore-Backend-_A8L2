@@ -17,6 +17,9 @@ const prismaClientKnownRequestError = (
     }));
     error.name = "Duplicate Entries";
     error.message = path ? path.join(", ") + " duplicate Entries" : err.name;
+  } else if (err.code === "P2025") {
+    error.name = "Data not exist";
+    error.message  = err.meta!.cause as string;
   }
   return error;
 };

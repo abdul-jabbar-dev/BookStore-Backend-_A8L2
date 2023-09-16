@@ -1,9 +1,18 @@
 import { RequestHandler } from "express";
 import catchAsync from "../../../utils/catchAsync";
-import { CreateUserDB, GetAUserDB, GetUserDB } from "./user.service";
-import { User } from "@prisma/client";
+import {
+  CreateUserDB,
+  DeleteUserDB,
+  GetAUserDB,
+  GetUserDB,
+  LoginUserDB,
+  ResetPasswordDB,
+  UpdateUserDB,
+} from "./user.service";
+import { Credential, User } from "@prisma/client";
 import sendResponse from "../../../utils/Response/sendResponse";
 import { TSendData } from "../../../types/Response/sendResponse";
+import { JwtPayload } from "jsonwebtoken";
 
 export const GetUser: RequestHandler = catchAsync(async (req, res) => {
   const result: TSendData<User[]> = await GetUserDB();
@@ -28,7 +37,7 @@ export const GetAUser: RequestHandler = catchAsync(async (req, res) => {
 });
 
 export const CreateUser: RequestHandler = catchAsync(async (req, res) => {
-  const data: User = req.body;
+  const data: User & Credential = req.body;
   const result: User = await CreateUserDB(data);
   sendResponse(res, {
     message: "User create successfully",
@@ -38,5 +47,55 @@ export const CreateUser: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-export const UpdateUser = () => {};
-export const DeleteUser = () => {};
+export const UpdateUser: RequestHandler = catchAsync(async (req, res) => {
+  const userData: Partial<Omit<User, "email">> = {
+    ...req.body,
+    email: undefined,
+    id: undefined,
+  };
+  const userId: string = req.params.id;
+  const result = await UpdateUserDB(userData, userId);
+  sendResponse(res, {
+    message: "User Update successfully",
+    success: true,
+    data: result,
+    statusCode: 200,
+  });
+});
+export const DeleteUser: RequestHandler = catchAsync(async (req, res) => {
+  const id: string = req.params.id;
+  const result = await DeleteUserDB(id);
+  sendResponse(res, {
+    message: "User Delete successfully",
+    success: true,
+    data: result,
+    statusCode: 200,
+  });
+});
+export const ResetPassword: RequestHandler = catchAsync(async (req, res) => {
+  const { newPassword, oldPassword } = req.body;
+  const result = await ResetPasswordDB(
+    req.user as JwtPayload,
+    newPassword,
+    oldPassword
+  );
+
+  sendResponse(res, {
+    message: "Password Reset successfully",
+    success: true,
+    data: result,
+    statusCode: 200,
+  });
+});
+
+export const LoginUser: RequestHandler = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
+  const result = await LoginUserDB({ email, password });
+
+  res.send({
+    message: "User signing successfully!",
+    success: true,
+    token: result.accessToken,
+    statusCode: 200,
+  });
+});

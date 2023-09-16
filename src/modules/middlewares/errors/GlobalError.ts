@@ -6,13 +6,12 @@ import prismaClientKnownRequestError from "../../../errors/prisma/prismaClientKn
 
 const GlobalError: ErrorRequestHandler = (err, req, res, next) => {
   let error: TSendError = {
-    message: err?.message || "",
     name: err?.name || "",
+    message: err?.message || "",
     success: false,
     path: err?.path || [{ message: "", path: "" }],
     statusCode: err?.statusCode || 404,
-  };
-
+  };  
   if (err instanceof Prisma.PrismaClientValidationError) {
     const { message, name, path } = prismaClientValidationError(err);
     error.message = message;
