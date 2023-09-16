@@ -15,17 +15,24 @@ enum ROLE {
   Admin
 }
 
+model Credential {
+  userId   String @id() @unique()
+  user     User   @relation(fields: [userId], references: [id])
+  password String
+  email    String
+}
+
 model User {
   id              String            @id() @default(uuid())
   name            String
   email           String            @unique()
-  password        String
   role            ROLE              @default(Customer)
   contactNo       String
   address         String
   profileImg      String?
   reviewAndRating ReviewAndRating[]
   order           Order?
+  credential      Credential?
 }
 
 model Category {
