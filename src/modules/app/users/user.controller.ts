@@ -7,6 +7,7 @@ import {
   GetUserDB,
   LoginUserDB,
   ResetPasswordDB,
+  GetProfileDB,
   UpdateUserDB,
 } from "./user.service";
 import { Credential, User } from "@prisma/client";
@@ -22,6 +23,16 @@ export const GetUser: RequestHandler = catchAsync(async (req, res) => {
     statusCode: 200,
     meta: result.meta,
     data: result.data,
+  });
+});
+export const GetProfile: RequestHandler = catchAsync(async (req, res) => {
+  const user = req.user
+  const result: User = await GetProfileDB(user!);
+  sendResponse(res, {
+    message: "User retrieve successfully",
+    success: true,
+    statusCode: 200,
+    data: result
   });
 });
 

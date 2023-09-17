@@ -61,6 +61,15 @@ export const GetUserDB = async (): Promise<TSendData<User[]>> => {
   return { data: result };
 };
 
+export const GetProfileDB = async (user: JwtPayload): Promise<User> => {
+  const result = await db.user.findUnique({ where: { id: user.id } });
+  if (!result) {
+    throw new Error("User not found");
+  } else {
+    return result;
+  }
+};
+
 export const GetAUserDB = async (id: string): Promise<User> => {
   const result: User | null = await db.user.findUnique({
     where: { id },
@@ -175,10 +184,10 @@ export const LoginUserDB = async (data: {
         },
         config.refreshTokenExpire
       ),
-    }
+    },
   });
   if (!updatedTokens) {
     throw new Error("Internal server error");
   }
-  return {...updatedTokens,password:undefined};
+  return { ...updatedTokens, password: undefined };
 };

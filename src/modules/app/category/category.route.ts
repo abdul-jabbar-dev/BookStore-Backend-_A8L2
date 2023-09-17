@@ -17,6 +17,6 @@ categoryRoute.post(
 );
 categoryRoute.get("/", GetCategory);
 categoryRoute.get("/:id", GetACategory);
-categoryRoute.put("/:id", authenticationRoute(["Admin"]), UpdateCategory);
+categoryRoute.patch("/:id", authenticationRoute(["Admin"]), UpdateCategory);
 categoryRoute.delete("/:id", authenticationRoute(["Admin"]), DeleteCategory);
 export default categoryRoute;

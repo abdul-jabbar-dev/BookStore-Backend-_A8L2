@@ -1,4 +1,4 @@
-import { Order } from "@prisma/client";
+import { JwtPayload } from "jsonwebtoken";
 import db from "../../../db";
 
 export const CreateOrderDB = async (
@@ -31,27 +31,41 @@ export const CreateOrderDB = async (
     });
     let succeed = await db.order.findUnique({
       where: { id: order!.id },
-      include:{orderedBookId:{select:{quantity:true,bookId:true}}}, 
+      include: { orderedBookId: { select: { quantity: true, bookId: true } } },
     });
     return succeed;
   } catch (error) {
     throw error;
   }
 };
-// export const GetOrderDB = async (id: string) => {
-//   const result = await db.order.findUnique({
-//     where: { id },
-//     include: { orderedBook: true },
-//   });
-//   return result;
-// };
-// export const GetAOrderDB = async (id: string) => {
-//   const result = await db.order.findUnique({
-//     where: { id },
-//     // include: { books:true },
-//   });
-//   return result;
-// };
+export const GetOrderDB = async (user: JwtPayload) => {
+  let result;
+  if (user.role === "Customer") {
+    result = await db.order.findMany({
+      where: { userId: user.id },
+    });
+  } else {
+    result = await db.order.findMany();
+  }
+  return result;
+};
+export const GetAOrderDB = async (user: JwtPayload, orderId: string) => {
+  let result;
+  if (user.role === "Customer") {
+    result = await db.order.findMany({
+      where: { userId: user.id, id: orderId },
+    });
+    if (!result) {
+      throw new Error("Try to valid order id");
+    }
+  } else { 
+    result = await db.order.findMany({
+      where: { id: orderId },
+    });
+  }
+
+  return result;
+};
 // export const UpdateOrderDB = async (id: string, data: Partial<Order>) => {
 //   const result = await db.order.update({
 //     where: { id },

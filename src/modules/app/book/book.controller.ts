@@ -2,6 +2,7 @@ import { Book, Prisma } from "@prisma/client";
 import sendResponse from "../../../utils/Response/sendResponse";
 import catchAsync from "../../../utils/catchAsync";
 import {
+  BooksByCategoryIdDB,
   CreateBookDB,
   DeleteBookDB,
   GetABookDB,
@@ -46,7 +47,6 @@ export const GetBook = catchAsync(async (req, res) => {
     message: "Book fetched successfully",
   });
 });
-
 export const CreateBook = catchAsync(async (req, res) => {
   const book: Book = req.body;
   const result = await CreateBookDB(book);
@@ -57,7 +57,6 @@ export const CreateBook = catchAsync(async (req, res) => {
     message: "Book created successfully",
   });
 });
-
 export const GetABook = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await GetABookDB(id);
@@ -87,5 +86,24 @@ export const DeleteBook = catchAsync(async (req, res) => {
     success: true,
     statusCode: 200,
     message: "Book deleted successfully",
+  });
+});
+export const BooksByCategoryId = catchAsync(async (req, res) => {
+  const { page, size } = req.query;
+
+  const pagination: TPagination = {
+    page: page ? parseInt(page as string) : 1,
+    size: size ? parseInt(size as string) : 10,
+    skip: 0,
+  };
+  pagination.skip = (pagination.page - 1) * pagination.size;
+  const categoryId = req.params.categoryId;
+  const result = await BooksByCategoryIdDB(categoryId, pagination);
+  sendResponse(res, {
+    success: true,
+    message: "Books with associated category data fetched successfully",
+    data: result.data,
+    meta: result.meta,
+    statusCode: 200,
   });
 });

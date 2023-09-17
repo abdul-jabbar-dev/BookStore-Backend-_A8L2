@@ -1,4 +1,4 @@
 export default {
-  accessTokenExpire: "3d",
-  refreshTokenExpire: "1w",
+  accessTokenExpire: "365d", // for assignment
+  refreshTokenExpire: "365d", // for assignment
 };

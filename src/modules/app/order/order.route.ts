@@ -2,8 +2,8 @@ import { Router } from "express";
 import {
   CreateOrder,
   // DeleteOrder,
-  // GetAOrder,
-  // GetOrder,
+  GetAOrder,
+  GetOrder,
   // UpdateOrder,
 } from "./order.controller";
 import authenticationRoute from "../../middlewares/authenticationRoute";
@@ -15,8 +15,12 @@ orderRoute.post(
   authenticationRoute(["Customer"]),
   CreateOrder
 );
-// orderRoute.get("/", authenticationRoute(["Customer"]), GetOrder);
-// orderRoute.get("/:id", GetAOrder);
-// orderRoute.put("/:id", authenticationRoute(["Admin"]), UpdateOrder);
+orderRoute.get("/", authenticationRoute(["Customer", "Admin"]), GetOrder);
+orderRoute.get(
+  "/:orderId",
+  authenticationRoute(["Customer", "Admin"]),
+  GetAOrder
+);
+// orderRoute.patch("/:id", authenticationRoute(["Admin"]), UpdateOrder);
 // orderRoute.delete("/:id", authenticationRoute(["Admin"]), DeleteOrder);
 export default orderRoute;

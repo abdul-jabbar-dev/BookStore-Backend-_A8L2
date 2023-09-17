@@ -7,7 +7,6 @@ export const CreateBookDB = async (booksInfo: Book): Promise<Book> => {
   const result = await db.book.create({ data: booksInfo });
   return result;
 };
-
 export const GetBookDB = async (
   pagination: TPagination,
   sort: TSort,
@@ -45,7 +44,6 @@ export const GetBookDB = async (
     data: result,
   };
 };
-
 export const GetABookDB = async (id: string) => {
   const result = await db.book.findUnique({
     where: { id },
@@ -63,4 +61,30 @@ export const UpdateBookDB = async (id: string, data: Partial<Book>) => {
 export const DeleteBookDB = async (id: string) => {
   const result = await db.book.delete({ where: { id } });
   return result;
+};
+export const BooksByCategoryIdDB = async (
+  id: string,
+  pagination: TPagination
+): Promise<TSendData<Book[]>> => {
+  const result = await db.book.findMany({
+    where: { categoryId: id },
+    take: pagination.size,
+    skip: pagination.skip,
+  });
+  if (!result) {
+    throw new Error("Books not found");
+  } else {
+    const count = await db.book.findMany({
+      where: { categoryId: id },
+    });
+    return {
+      meta: {
+        total: count.length,
+        page: pagination.page,
+        size: pagination.size,
+        totalPage: result.length,
+      },
+      data: result,
+    };
+  }
 };

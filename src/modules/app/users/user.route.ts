@@ -7,6 +7,7 @@ import {
   UpdateUser,
   ResetPassword,
   LoginUser,
+  GetProfile,
 } from "./user.controller";
 import authenticationRoute from "../../middlewares/authenticationRoute";
 
@@ -15,13 +16,14 @@ const authRoute = Router();
 
 // user route
 userRoute.get("/", authenticationRoute(["Admin"]), GetUser);
+userRoute.get("/profile", authenticationRoute(["Admin","Customer"]), GetProfile);
 userRoute.get("/:id", authenticationRoute(["Admin"]), GetAUser);
 userRoute.delete("/:id", authenticationRoute(["Admin"]), DeleteUser);
-userRoute.put("/:id", authenticationRoute(["Admin"]), UpdateUser);
+userRoute.patch("/:id", authenticationRoute(["Admin"]), UpdateUser);
 
 // auth route
 authRoute.post("/signup", CreateUser);
-authRoute.put(
+authRoute.patch(
   "/reset_password",
   authenticationRoute(["Admin", "Customer"]),
   ResetPassword
