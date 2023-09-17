@@ -11,6 +11,7 @@ const authenticationRoute =
       next(new Error("Token must be provided"));
     }
     const token = bearer_token?.split(" ")[1];
+ 
     try {
       const decoded: JwtPayload | string = jwt.verify(
         token as string,

@@ -12,6 +12,7 @@ const GlobalError: ErrorRequestHandler = (err, req, res, next) => {
     path: err?.path || [{ message: "", path: "" }],
     statusCode: err?.statusCode || 404,
   };  
+ 
   if (err instanceof Prisma.PrismaClientValidationError) {
     const { message, name, path } = prismaClientValidationError(err);
     error.message = message;

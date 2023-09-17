@@ -12,7 +12,7 @@ export const GetCategoryDB = async () => {
 export const GetACategoryDB = async (id: string) => {
   const result = await db.category.findUnique({
     where: { id },
-    include: { books: true },
+    include: { books:true },
   });
   return result;
 };

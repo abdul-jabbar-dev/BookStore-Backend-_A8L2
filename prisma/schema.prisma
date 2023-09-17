@@ -15,13 +15,22 @@ enum ROLE {
   Admin
 }
 
+enum ORDER_STATUS {
+  Pending
+  Shipping
+  Delivered
+}
+
 model Credential {
   userId       String  @id() @unique()
   user         User    @relation(fields: [userId], references: [id])
   password     String
   email        String  @unique()
-  refreshToken String?
   accessToken  String?
+  refreshToken String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model User {
@@ -33,27 +42,36 @@ model User {
   address         String
   profileImg      String?
   reviewAndRating ReviewAndRating[]
-  order           Order?
+  order           Order[]
   credential      Credential?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Category {
   id    String @id() @default(uuid())
   title String @unique
   books Book[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Book {
   id              String            @id() @default(uuid())
-  title           String            @unique
+  title           String
   author          String
   price           Float
   genre           String
   publicationDate String
   categoryId      String
-  caregory        Category          @relation(fields: [categoryId], references: [id])
+  category        Category          @relation(fields: [categoryId], references: [id])
   reviewAndRating ReviewAndRating[]
   orderedBook     OrderedBook[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ReviewAndRating {
@@ -61,26 +79,36 @@ model ReviewAndRating {
   review String
   rating Int
   userId String
+
   user   User   @relation(fields: [userId], references: [id])
   bookId String
   book   Book   @relation(fields: [bookId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model OrderedBook {
-  id String @id() @default(uuid())
-
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id])
+  id       String @id() @default(uuid())
+  quantity Int
 
   bookId String
   Book   Book   @relation(fields: [bookId], references: [id])
 
-  quantity Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderId   String
+  Order     Order    @relation(fields: [orderId], references: [id])
 }
 
 model Order {
-  id          String        @id() @default(uuid())
-  orderedBook OrderedBook[]
-  userId      String        @unique
-  user        User          @relation(fields: [userId], references: [id])
+  id     String       @id() @default(uuid())
+  statue ORDER_STATUS @default(Pending)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  orderedBookId OrderedBook[]
 }
