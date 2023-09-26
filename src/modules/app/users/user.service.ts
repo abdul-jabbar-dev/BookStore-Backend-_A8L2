@@ -10,7 +10,7 @@ export const CreateUserDB = async ({
   password,
   ...userInfo
 }: User & Credential): Promise<User> => {
-  let user: User | undefined;
+  let user: User | undefined; 
   const session = await db.$transaction(async (prismaDb) => {
     user = await prismaDb.user.create({ data: userInfo }).catch((err) => {
       throw err;
@@ -149,7 +149,7 @@ export const LoginUserDB = async (data: {
 }) => {
   const user: User | null = await db.user.findUnique({
     where: { email: data.email },
-  });
+  }); 
   if (!user) {
     throw new Error("Invalid Email address");
   }

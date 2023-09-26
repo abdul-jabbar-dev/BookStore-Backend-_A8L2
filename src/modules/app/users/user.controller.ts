@@ -26,13 +26,13 @@ export const GetUser: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 export const GetProfile: RequestHandler = catchAsync(async (req, res) => {
-  const user = req.user
+  const user = req.user;
   const result: User = await GetProfileDB(user!);
   sendResponse(res, {
     message: "User retrieve successfully",
     success: true,
     statusCode: 200,
-    data: result
+    data: result,
   });
 });
 
