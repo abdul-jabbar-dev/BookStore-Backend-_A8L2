@@ -16,14 +16,12 @@ exports.GetAOrderDB = exports.GetOrderDB = exports.CreateOrderDB = void 0;
 const db_1 = __importDefault(require("../../../db"));
 const CreateOrderDB = (id, orderedBooks) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let order;
         yield db_1.default.$transaction((asyncDB) => __awaiter(void 0, void 0, void 0, function* () {
             const existOrder = yield asyncDB.order.create({ data: { userId: id } });
             if (!existOrder) {
                 throw new Error("Invalid User");
             }
             else {
-                order = existOrder;
                 for (let i = 0; i < orderedBooks.length; i++) {
                     const element = orderedBooks[i];
                     const makeOrderList = yield asyncDB.orderedBook.create({
@@ -38,12 +36,14 @@ const CreateOrderDB = (id, orderedBooks) => __awaiter(void 0, void 0, void 0, fu
                     }
                 }
             }
+            let succeed = yield db_1.default.order.findUnique({
+                where: { id: existOrder.id },
+                include: {
+                    orderedBookId: { select: { quantity: true, bookId: true } },
+                },
+            });
+            return succeed;
         }));
-        let succeed = yield db_1.default.order.findUnique({
-            where: { id: order.id },
-            include: { orderedBookId: { select: { quantity: true, bookId: true } } },
-        });
-        return succeed;
     }
     catch (error) {
         throw error;

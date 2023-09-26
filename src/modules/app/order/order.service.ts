@@ -1,19 +1,18 @@
 import { JwtPayload } from "jsonwebtoken";
 import db from "../../../db";
+import { Order } from "@prisma/client";
 
 export const CreateOrderDB = async (
   id: string,
   orderedBooks: { bookId: string; quantity: number }[]
 ) => {
   try {
-    let order;
     await db.$transaction(async (asyncDB) => {
       const existOrder = await asyncDB.order.create({ data: { userId: id } });
 
       if (!existOrder) {
         throw new Error("Invalid User");
       } else {
-        order = existOrder;
         for (let i = 0; i < orderedBooks.length; i++) {
           const element = orderedBooks[i];
           const makeOrderList = await asyncDB.orderedBook.create({
@@ -28,12 +27,14 @@ export const CreateOrderDB = async (
           }
         }
       }
+      let succeed = await db.order.findUnique({
+        where: { id: existOrder.id },
+        include: {
+          orderedBookId: { select: { quantity: true, bookId: true } },
+        },
+      });
+      return succeed;
     });
-    let succeed = await db.order.findUnique({
-      where: { id: order!.id },
-      include: { orderedBookId: { select: { quantity: true, bookId: true } } },
-    });
-    return succeed;
   } catch (error) {
     throw error;
   }
@@ -58,7 +59,7 @@ export const GetAOrderDB = async (user: JwtPayload, orderId: string) => {
     if (!result) {
       throw new Error("Try to valid order id");
     }
-  } else { 
+  } else {
     result = await db.order.findMany({
       where: { id: orderId },
     });

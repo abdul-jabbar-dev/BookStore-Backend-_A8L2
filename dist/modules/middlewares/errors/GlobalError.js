@@ -14,6 +14,7 @@ const GlobalError = (err, req, res, next) => {
         path: (err === null || err === void 0 ? void 0 : err.path) || [{ message: "", path: "" }],
         statusCode: (err === null || err === void 0 ? void 0 : err.statusCode) || 404,
     };
+    console.log(err);
     if (err instanceof client_1.Prisma.PrismaClientValidationError) {
         const { message, name, path } = (0, prismaClientValidationError_1.default)(err);
         error.message = message;

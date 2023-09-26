@@ -33,7 +33,7 @@ exports.GetProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         message: "User retrieve successfully",
         success: true,
         statusCode: 200,
-        data: result
+        data: result,
     });
 }));
 exports.GetAUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
