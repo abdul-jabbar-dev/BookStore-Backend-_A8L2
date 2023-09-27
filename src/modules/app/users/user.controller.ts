@@ -101,6 +101,7 @@ export const ResetPassword: RequestHandler = catchAsync(async (req, res) => {
 
 export const LoginUser: RequestHandler = catchAsync(async (req, res) => {
   const { email, password } = req.body;
+  console.log(req.body)
   const result = await LoginUserDB({ email, password });
 
   res.send({

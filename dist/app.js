@@ -33,9 +33,6 @@ const category_route_1 = __importDefault(require("./modules/app/category/categor
 const book_route_1 = __importDefault(require("./modules/app/book/book.route"));
 const order_route_1 = __importDefault(require("./modules/app/order/order.route"));
 const app = (0, express_1.default)();
-app.get("/", (req, res) => {
-    res.send("Home");
-});
 app.use(express_1.default.json());
 app.use("/api/v1/users", user_route_1.default);
 app.use("/api/v1/auth", user_route_1.authRoute);

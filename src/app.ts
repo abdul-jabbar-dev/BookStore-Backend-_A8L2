@@ -6,11 +6,8 @@ import bookRoute from "./modules/app/book/book.route";
 import orderRoute from "./modules/app/order/order.route";
 
 const app = express();
-
-app.get("/", (req, res) => {
-  res.send("Home");
-});
 app.use(express.json());
+ 
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/categories",categoryRoute);

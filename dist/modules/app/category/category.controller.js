@@ -27,6 +27,7 @@ exports.CreateCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 
     });
 }));
 exports.GetCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('hwllow ');
     const result = yield (0, category_service_1.GetCategoryDB)();
     (0, sendResponse_1.default)(res, {
         data: result,

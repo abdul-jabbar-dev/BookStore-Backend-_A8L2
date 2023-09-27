@@ -89,6 +89,7 @@ exports.ResetPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
 }));
 exports.LoginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
+    console.log(req.body);
     const result = yield (0, user_service_1.LoginUserDB)({ email, password });
     res.send({
         message: "User signing successfully!",

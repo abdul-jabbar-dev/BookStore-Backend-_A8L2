@@ -6,20 +6,31 @@ import db from "../../db";
 const authenticationRoute =
   (role: ROLE[]): RequestHandler =>
   async (req, res, next) => {
-    const bearer_token = req.headers.authorization;
-    if (!bearer_token) {
+    let token = req.headers.authorization;
+    if (token && typeof token === "undefined") {
       next(new Error("Token must be provided"));
     }
-    const token = bearer_token?.split(" ")[1];
- 
+    if (token && token.includes("Bearer")) {
+      token = token.split(" ")[1];
+    }
+    if (!token) {
+      next(new Error("Token must be provided"));
+    }
+
     try {
       const decoded: JwtPayload | string = jwt.verify(
         token as string,
         process.env.JWT_SECRET as string
       );
+
       if (typeof decoded === "string") {
         next(new Error("Invalid Token"));
       } else {
+        if (decoded.role === "admin") {
+          decoded.role = "Admin";
+        } else if (decoded.role === "customer") {
+          decoded.role = "Customer";
+        }
         if (role?.includes(decoded.role)) {
           const user = await db.user.findUnique({ where: { id: decoded.id } });
           if (!user) {

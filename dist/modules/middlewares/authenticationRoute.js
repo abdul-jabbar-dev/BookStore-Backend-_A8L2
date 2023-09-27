@@ -15,17 +15,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const db_1 = __importDefault(require("../../db"));
 const authenticationRoute = (role) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const bearer_token = req.headers.authorization;
-    if (!bearer_token) {
+    let token = req.headers.authorization;
+    if (token && typeof token === "undefined") {
         next(new Error("Token must be provided"));
     }
-    const token = bearer_token === null || bearer_token === void 0 ? void 0 : bearer_token.split(" ")[1];
+    if (token && token.includes("Bearer")) {
+        token = token.split(" ")[1];
+    }
+    if (!token) {
+        next(new Error("Token must be provided"));
+    }
     try {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
         if (typeof decoded === "string") {
             next(new Error("Invalid Token"));
         }
         else {
+            if (decoded.role === "admin") {
+                decoded.role = "Admin";
+            }
+            else if (decoded.role === "customer") {
+                decoded.role = "Customer";
+            }
             if (role === null || role === void 0 ? void 0 : role.includes(decoded.role)) {
                 const user = yield db_1.default.user.findUnique({ where: { id: decoded.id } });
                 if (!user) {

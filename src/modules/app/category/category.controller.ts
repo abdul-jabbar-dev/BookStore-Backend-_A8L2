@@ -21,6 +21,7 @@ export const CreateCategory = catchAsync(async (req, res) => {
   });
 });
 export const GetCategory = catchAsync(async (req, res) => {
+  console.log('hwllow ')
   const result = await GetCategoryDB();
   sendResponse(res, {
     data: result,
